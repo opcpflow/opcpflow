@@ -1,0 +1,47 @@
+{
+  "name": "@opcpflow/create-app",
+  "version": "0.1.0",
+  "description": "OpcpFlow project scaffolding CLI",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "create-opcpflow-app": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "prompts": "^2.4.2",
+    "kolorist": "^1.8.0",
+    "minimist": "^1.2.8"
+  },
+  "devDependencies": {
+    "@types/prompts": "^2.4.0",
+    "@types/minimist": "^1.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opcpflow/opcpflow.git",
+    "directory": "packages/create-app"
+  },
+  "bugs": {
+    "url": "https://github.com/opcpflow/opcpflow/issues"
+  },
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "scaffold",
+    "cli",
+    "opcpflow",
+    "template"
+  ]
+}

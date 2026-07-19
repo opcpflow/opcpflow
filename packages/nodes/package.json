@@ -1,0 +1,45 @@
+{
+  "name": "@opcpflow/nodes",
+  "version": "0.1.0",
+  "description": "OpcpFlow preset node definitions (11 types, 4 categories)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "examples"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@opcpflow/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opcpflow/opcpflow.git",
+    "directory": "packages/nodes"
+  },
+  "bugs": {
+    "url": "https://github.com/opcpflow/opcpflow/issues"
+  },
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "dag",
+    "nodes",
+    "preset-nodes",
+    "workflow-components"
+  ]
+}

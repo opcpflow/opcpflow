@@ -1,0 +1,63 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: |
+          pnpm build:core
+          pnpm build:packages
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git tag --sort=-version:refname | head -n 2 | tail -n 1 || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            RANGE="HEAD"
+          else
+            RANGE="$PREV_TAG..HEAD"
+          fi
+          echo "## What's Changed" > /tmp/release-notes.md
+          git log $RANGE --oneline --no-decorate --format="* %s (%h)" >> /tmp/release-notes.md
+          echo "" >> /tmp/release-notes.md
+          echo "**Full Changelog**: https://github.com/opcpflow/opcpflow/commits/${{ github.ref_name }}" >> /tmp/release-notes.md
+          echo "notes_path=/tmp/release-notes.md" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body_path: ${{ steps.changelog.outputs.notes_path }}
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+          files: |
+            packages/core/dist/*.js
+            packages/react/dist/*.js
+            packages/nodes/dist/*.js
+            packages/engine/dist/*.js

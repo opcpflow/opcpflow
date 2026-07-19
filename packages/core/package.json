@@ -1,0 +1,42 @@
+{
+  "name": "@opcpflow/core",
+  "version": "0.1.0",
+  "description": "OpcpFlow core types, validation, and utilities",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opcpflow/opcpflow.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/opcpflow/opcpflow/issues"
+  },
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "dag",
+    "workflow",
+    "typescript",
+    "validation",
+    "topology"
+  ]
+}

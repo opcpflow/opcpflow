@@ -1,0 +1,19 @@
+# This file defines who owns which files in the repository.
+# It is used to automatically request reviews when a PR modifies owned code.
+#
+# For more info: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for the entire repository
+# * @opcpflow/maintainers
+
+# Core packages
+# packages/core/ @opcpflow/core-maintainers
+# packages/engine/ @opcpflow/engine-maintainers
+# packages/react/ @opcpflow/react-maintainers
+# packages/nodes/ @opcpflow/nodes-maintainers
+
+# CI/CD configuration
+# .github/workflows/ @opcpflow/infrastructure-maintainers
+
+# Documentation
+# apps/docs/ @opcpflow/docs-maintainers

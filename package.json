@@ -1,0 +1,38 @@
+{
+  "name": "opcpflow-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "OpcpFlow - Open DAG Workflow Framework",
+  "scripts": {
+    "build": "pnpm -r build",
+    "build:core": "pnpm --filter @opcpflow/core build",
+    "build:packages": "pnpm --filter @opcpflow/* build",
+    "dev": "pnpm --filter @opcpflow/react dev",
+    "test": "pnpm -r test",
+    "test:ci": "pnpm -r test -- --coverage",
+    "lint": "eslint packages/*/src --ext .ts,.tsx",
+    "format": "prettier --write 'packages/*/src/**/*.{ts,tsx}'",
+    "clean": "pnpm -r exec rm -rf dist",
+    "publish:all": "pnpm publish --filter @opcpflow/*"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "pnpm@10.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opcpflow/opcpflow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/opcpflow/opcpflow/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "opcpflow",
+  "homepage": "https://github.com/opcpflow/opcpflow",
+  "keywords": [
+    "dag",
+    "workflow",
+    "typescript",
+    "framework"
+  ]
+}

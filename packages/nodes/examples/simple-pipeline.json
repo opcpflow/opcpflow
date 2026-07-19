@@ -1,0 +1,209 @@
+{
+  "nodes": [
+    {
+      "id": "trigger_1",
+      "type": "trigger",
+      "position": { "x": 500, "y": 0 },
+      "data": {
+        "label": "Campaign Trigger",
+        "command": "Generate a marketing campaign video for new product launch"
+      }
+    },
+    {
+      "id": "decompose_1",
+      "type": "task_decompose",
+      "position": { "x": 500, "y": 120 },
+      "data": {
+        "label": "Decompose Campaign",
+        "instructions": "Split into: copywriting, video asset production",
+        "model": "gpt-4o",
+        "api_endpoint": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+
+    {
+      "id": "knowledge_copy",
+      "type": "knowledge",
+      "position": { "x": 60, "y": 280 },
+      "data": {
+        "label": "Brand Knowledge",
+        "inline_content": "Brand guidelines: young audience (18-30), energetic tone, blue/white color scheme, minimal design philosophy"
+      }
+    },
+    {
+      "id": "strategy_copy",
+      "type": "strategy",
+      "position": { "x": 60, "y": 400 },
+      "data": {
+        "label": "Copy Strategy",
+        "persona": "Senior copywriter specializing in youth marketing",
+        "rules": "Output must be in Chinese, under 200 characters, include CTA",
+        "guidelines": "Focus on emotional appeal and product value proposition"
+      }
+    },
+    {
+      "id": "llm_call_copy",
+      "type": "llm_call",
+      "position": { "x": 60, "y": 520 },
+      "data": {
+        "label": "Write Copy",
+        "instructions": "Write engaging marketing copy based on campaign brief and brand guidelines",
+        "model": "gpt-4o",
+        "temperature": 0.7,
+        "api_endpoint": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+    {
+      "id": "verify_copy",
+      "type": "verification",
+      "position": { "x": 60, "y": 640 },
+      "data": {
+        "label": "Verify Copy",
+        "auto_generate": true,
+        "min_score": 0.7,
+        "max_retries": 2
+      }
+    },
+
+    {
+      "id": "knowledge_video",
+      "type": "knowledge",
+      "position": { "x": 360, "y": 280 },
+      "data": {
+        "label": "Visual Guidelines",
+        "inline_content": "Visual brand identity: 16:9 landscape format, blue/white palette, minimalist motion graphics, 30s max duration"
+      }
+    },
+    {
+      "id": "strategy_video",
+      "type": "strategy",
+      "position": { "x": 360, "y": 400 },
+      "data": {
+        "label": "Video Strategy",
+        "persona": "Video production specialist",
+        "rules": "Output must be 30s max, use brand colors, include logo at end",
+        "guidelines": "Fast-paced editing, upbeat background music, clear product demonstration"
+      }
+    },
+    {
+      "id": "mcp_tool_video",
+      "type": "mcp_tool",
+      "position": { "x": 360, "y": 520 },
+      "data": {
+        "label": "Generate Video",
+        "tool_name": "video_compose",
+        "parameters": "{\"duration\": 30, \"format\": \"mp4\", \"resolution\": \"1920x1080\"}"
+      }
+    },
+    {
+      "id": "verify_video",
+      "type": "verification",
+      "position": { "x": 360, "y": 640 },
+      "data": {
+        "label": "Verify Video",
+        "auto_generate": true,
+        "min_score": 0.7,
+        "max_retries": 2
+      }
+    },
+
+    {
+      "id": "dynamic_1",
+      "type": "dynamic",
+      "position": { "x": 650, "y": 280 },
+      "data": {
+        "label": "Dynamic Fallback",
+        "instructions": "Handle any unmatched sub-tasks with dynamic sub-DAG generation",
+        "max_instances": 5,
+        "model": "gpt-4o",
+        "api_endpoint": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+
+    {
+      "id": "knowledge_merge",
+      "type": "knowledge",
+      "position": { "x": 880, "y": 280 },
+      "data": {
+        "label": "Assembly Knowledge",
+        "inline_content": "Final deliverable: combine written copy with video asset into a campaign package. Include metadata: title, description, target audience, campaign tags. Ensure brand consistency across all assets."
+      }
+    },
+    {
+      "id": "strategy_merge",
+      "type": "strategy",
+      "position": { "x": 880, "y": 400 },
+      "data": {
+        "label": "Assembly Strategy",
+        "persona": "Campaign assembly specialist",
+        "rules": "Include all agent outputs without content loss; maintain brand consistency across all pieces",
+        "guidelines": "Structure: campaign overview → copy → video metadata → distribution channels",
+        "post_hooks": "Log final deliverable metadata to campaign audit trail"
+      }
+    },
+
+    {
+      "id": "merge_1",
+      "type": "merge",
+      "position": { "x": 500, "y": 780 },
+      "data": {
+        "label": "Assemble Campaign",
+        "instructions": "Combine copy, video assets, and dynamic outputs into a cohesive campaign package",
+        "output_format": "mixed",
+        "pipeline": "llm",
+        "model": "gpt-4o",
+        "api_endpoint": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+    {
+      "id": "verify_merge",
+      "type": "verification",
+      "position": { "x": 500, "y": 900 },
+      "data": {
+        "label": "Verify Final Output",
+        "auto_generate": true,
+        "min_score": 0.7,
+        "max_retries": 2
+      }
+    },
+    {
+      "id": "output_1",
+      "type": "output",
+      "position": { "x": 500, "y": 1020 },
+      "data": {
+        "label": "Final Output",
+        "format": "auto"
+      }
+    }
+  ],
+  "edges": [
+    { "id": "e_trigger_decompose", "source": "trigger_1", "target": "decompose_1", "type": "execution" },
+
+    { "id": "e_decompose_knowledge_copy", "source": "decompose_1", "target": "knowledge_copy", "type": "execution" },
+    { "id": "e_knowledge_copy_strategy_copy", "source": "knowledge_copy", "target": "strategy_copy", "type": "execution" },
+    { "id": "e_strategy_copy_llm", "source": "strategy_copy", "target": "llm_call_copy", "type": "execution" },
+    { "id": "e_llm_verify_copy", "source": "llm_call_copy", "target": "verify_copy", "type": "execution" },
+    { "id": "e_verify_copy_merge", "source": "verify_copy", "target": "merge_1", "type": "execution" },
+
+    { "id": "e_decompose_knowledge_video", "source": "decompose_1", "target": "knowledge_video", "type": "execution" },
+    { "id": "e_knowledge_video_strategy_video", "source": "knowledge_video", "target": "strategy_video", "type": "execution" },
+    { "id": "e_strategy_video_mcp", "source": "strategy_video", "target": "mcp_tool_video", "type": "execution" },
+    { "id": "e_mcp_verify_video", "source": "mcp_tool_video", "target": "verify_video", "type": "execution" },
+    { "id": "e_verify_video_merge", "source": "verify_video", "target": "merge_1", "type": "execution" },
+
+    { "id": "e_decompose_dynamic", "source": "decompose_1", "target": "dynamic_1", "type": "execution" },
+    { "id": "e_dynamic_merge", "source": "dynamic_1", "target": "merge_1", "type": "execution" },
+
+    { "id": "e_decompose_knowledge_merge", "source": "decompose_1", "target": "knowledge_merge", "type": "execution" },
+    { "id": "e_knowledge_merge_strategy_merge", "source": "knowledge_merge", "target": "strategy_merge", "type": "execution" },
+    { "id": "e_strategy_merge_merge", "source": "strategy_merge", "target": "merge_1", "type": "execution" },
+
+    { "id": "e_merge_verify", "source": "merge_1", "target": "verify_merge", "type": "execution" },
+    { "id": "e_verify_output", "source": "verify_merge", "target": "output_1", "type": "execution" }
+  ],
+  "metadata": {
+    "name": "Campaign Generator",
+    "description": "D4 model example: decompose into copywriting + video + dynamic fallback, each agent with dedicated assembly layer, merge with own strategy/knowledge, final verification",
+    "version": 1
+  }
+}

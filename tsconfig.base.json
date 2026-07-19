@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@opcpflow/core": ["packages/core/src"],
+      "@opcpflow/react": ["packages/react/src"],
+      "@opcpflow/nodes": ["packages/nodes/src"],
+      "@opcpflow/engine": ["packages/engine/src"],
+      "@opcpflow/commander": ["packages/commander/src"],
+      "@opcpflow/tokens": ["packages/tokens/src"],
+      "@opcpflow/evolution": ["packages/evolution/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "**/__tests__/**"]
+}

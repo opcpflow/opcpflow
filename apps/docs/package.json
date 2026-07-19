@@ -1,0 +1,24 @@
+{
+  "name": "opcpflow-docs",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "postinstall": "node -e \"try{var p=require('./node_modules/@docusaurus/core/package.json');if(!p.main){p.main='lib/index.js';require('fs').writeFileSync('./node_modules/@docusaurus/core/package.json',JSON.stringify(p,null,2))}}catch(e){}\""
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/plugin-content-docs": "^3.7.0",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "patch-package": "^8.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

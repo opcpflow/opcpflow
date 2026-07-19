@@ -1,0 +1,73 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Publish Packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: |
+          pnpm build:core
+          pnpm build:packages
+
+      - name: Get release version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Update package versions
+        run: |
+          pnpm -r --filter @opcpflow/* exec -- npx json -I -f package.json -e "this.version='${{ steps.version.outputs.version }}'"
+
+      - name: Publish to npm
+        run: |
+          pnpm publish --filter @opcpflow/core --no-git-checks --access public
+          pnpm publish --filter @opcpflow/react --no-git-checks --access public
+          pnpm publish --filter @opcpflow/nodes --no-git-checks --access public
+          pnpm publish --filter @opcpflow/engine --no-git-checks --access public
+          pnpm publish --filter @opcpflow/tokens --no-git-checks --access public
+          pnpm publish --filter @opcpflow/create-app --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish demo to GitHub Pages
+        if: steps.version.outputs.version != ''
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apps/demo/dist
+
+  notify:
+    name: Notify Release
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - name: Post release summary
+        run: |
+          echo "## Release v${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Packages published to npm:" >> $GITHUB_STEP_SUMMARY
+          echo "- @opcpflow/core" >> $GITHUB_STEP_SUMMARY
+          echo "- @opcpflow/react" >> $GITHUB_STEP_SUMMARY
+          echo "- @opcpflow/nodes" >> $GITHUB_STEP_SUMMARY
+          echo "- @opcpflow/engine" >> $GITHUB_STEP_SUMMARY
+          echo "- @opcpflow/tokens" >> $GITHUB_STEP_SUMMARY
+          echo "- @opcpflow/create-app" >> $GITHUB_STEP_SUMMARY
