@@ -1,4 +1,4 @@
-name: Create Release
+name: Release & Publish
 
 on:
   push:
@@ -9,6 +9,10 @@ permissions:
   contents: write
   pages: write
   id-token: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   release:
@@ -23,8 +27,9 @@ jobs:
           version: 10
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
       - run: pnpm install --frozen-lockfile
 
       - name: Build all packages
@@ -48,16 +53,29 @@ jobs:
           echo "notes_path=/tmp/release-notes.md" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           body_path: ${{ steps.changelog.outputs.notes_path }}
-          draft: false
-          prerelease: false
+          fail_on_unmatched_files: false
           generate_release_notes: false
-          files: |
-            packages/core/dist/*.js
-            packages/react/dist/*.js
-            packages/nodes/dist/*.js
-            packages/engine/dist/*.js
+
+      - name: Publish to npm
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          pnpm -r --filter @opcpflow/* exec -- npx json -I -f package.json -e "this.version='$VERSION'" 2>/dev/null || true
+          pnpm publish --filter @opcpflow/core --no-git-checks --access public
+          pnpm publish --filter @opcpflow/react --no-git-checks --access public
+          pnpm publish --filter @opcpflow/nodes --no-git-checks --access public
+          pnpm publish --filter @opcpflow/engine --no-git-checks --access public
+          pnpm publish --filter @opcpflow/tokens --no-git-checks --access public
+          pnpm publish --filter @opcpflow/create-app --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish demo to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apps/demo/dist
