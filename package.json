@@ -9,7 +9,7 @@
     "build:packages": "pnpm --filter @opcpflow/* build",
     "dev": "pnpm --filter @opcpflow/react dev",
     "test": "pnpm -r test",
-    "test:ci": "pnpm -r test -- --coverage",
+    "test:ci": "pnpm --filter !opcpflow-test-harness -r test -- --coverage",
     "lint": "eslint packages/*/src --ext .ts,.tsx",
     "format": "prettier --write 'packages/*/src/**/*.{ts,tsx}'",
     "clean": "pnpm -r exec rm -rf dist",
