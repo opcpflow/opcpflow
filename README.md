@@ -7,16 +7,16 @@
   <img src="https://img.shields.io/badge/status-pre--release-yellow" alt="Pre-release" />
 </p>
 
-**智能化 DAG 编排工作流框架** — AI 代理组装、多类型素材合成、D4 自动进化的 TypeScript DAG 框架。
+**Open DAG Workflow Framework** — AI agent assembly, multi-type asset composition, and D4 self-evolving TypeScript DAG framework.
 
-包含可视化编辑器、11 种 AI 编排节点、Ready Frontier 事件驱动引擎、ContextStore 三级记忆、D4EvolutionHook 自动进化。
+Includes a visual editor, 11 AI orchestration node types, Ready Frontier event-driven engine, ContextStore three-level memory, and D4EvolutionHook for automatic workflow evolution.
 
-> **为什么选择 OpcpFlow？**
+> **Why OpcpFlow?**
 >
-> - **D4 自进化** — 工作流根据使用模式自动从静态进化到动态，而非一成不变
-> - **Agent 装配模式** — 知识 + 策略 + 执行 + 质检的完整 AI Agent 范式，而非简单工具链
-> - **Ready Frontier 引擎** — 依赖满足即执行，不等同层节点，消除等待浪费
-> - **TypeScript 原生 + 可嵌入** — 非独立服务，`npm install` 即可嵌入任何 React 应用
+> - **D4 Self-Evolution** — Workflows evolve from static to dynamic based on usage patterns, rather than staying fixed forever
+> - **Agent Assembly Pattern** — Knowledge + Strategy + Execution + Verification in a complete AI Agent paradigm, not just a toolchain
+> - **Ready Frontier Engine** — Execute as soon as dependencies are met; no waiting for same-level peers
+> - **TypeScript Native + Embeddable** — Not a standalone service; `npm install` into any React app
 
 ```bash
 npm install @opcpflow/core @opcpflow/nodes @opcpflow/react
@@ -27,13 +27,13 @@ npm install @opcpflow/core @opcpflow/nodes @opcpflow/react
 ## Packages
 
 ```
-@opcpflow/core       DAG 类型、验证、拓扑排序、Ready Frontier 引擎、ContextStore、EventBus、D4进化
-@opcpflow/nodes      11 种 AI 编排节点定义（颜色、图标、分类、表单字段）
-@opcpflow/react      DAGEditor 可视化编辑器 + 沙盒执行
-@opcpflow/engine     Ready Frontier 执行引擎、ContextStore、子图重规划、遥测
+@opcpflow/core       DAG types, validation, topology, Ready Frontier engine, ContextStore, EventBus, D4 evolution
+@opcpflow/nodes      11 AI orchestration node definitions (colors, icons, categories, form fields)
+@opcpflow/react      DAGEditor visual editor + sandbox execution
+@opcpflow/engine     Ready Frontier execution engine, ContextStore, sub-graph replanning, telemetry
 ```
 
-### 依赖流
+### Dependency Flow
 
 ```
 react → nodes → core
@@ -42,57 +42,56 @@ engine → core
 
 ---
 
-## 核心能力
+## Core Capabilities
 
-| 能力 | 说明 |
-|------|------|
-| **11 种 AI 编排节点** | trigger / task_decompose / dynamic / llm_call / api_call / mcp_tool / knowledge / strategy / verification / merge / output |
-| **Ready Frontier 引擎** | 依赖满足即执行，不等同层，消除等待浪费 |
-| **ContextStore 三级记忆** | L1 节点临时 / L2 结构化状态 / L3 外部缓存，含冲突检测+新鲜度+源标记 |
-| **EventBus 事件总线** | dag.* / node.* 全生命周期事件，支持可观测性+进化钩子 |
-| **D4 自动进化** | 静态→半静态→动态→进化复用，dynamic 节点捕获未匹配子任务，自动生成子 DAG |
-| **D4EvolutionHook** | 追踪动态节点频率、节点耗时，自动建议提升为静态节点 |
-| **Token 预算控制** | 跟踪 Token 消耗，超限熔断 |
-| **自动数据路由** | 连线即数据流，零配置输入输出 |
-| **沙盒测试** | 编辑器内执行 DAG，节点实时变色 |
-| **Headless CI** | `testDAG()` 无 UI 执行，适合 CI 流水线 |
-
----
-
-## 节点类型（11 种）
-
-| 分类 | 类型 | 说明 |
-|------|------|------|
-| **control** | `trigger` | DAG 触发起点 |
-| | `task_decompose` | 命令拆解为并行子任务 |
-| | `dynamic` | ⚡ 动态兜底 + D4 进化 |
-| | `output` | 最终交付物输出 |
-| **ai** | `llm_call` | LLM 推理/生成 |
-| | `knowledge` | 知识库（三源合并） |
-| | `strategy` | Persona/规则/行为指南 |
-| **integration** | `api_call` | HTTP API 调用 |
-| | `mcp_tool` | MCP 协议工具调用 |
-| | `merge` | 多类型素材合成 |
-| **verification** | `verification` | SGV 对抗质检 |
+| Capability | Description |
+|------------|-------------|
+| **11 AI Nodes** | trigger / task_decompose / dynamic / llm_call / api_call / mcp_tool / knowledge / strategy / verification / merge / output |
+| **Ready Frontier Engine** | Dependency-activated execution; no level-based waiting |
+| **ContextStore 3-Level Memory** | L1 scratch / L2 structured state / L3 external cache, with conflict detection + freshness + source tagging |
+| **EventBus** | dag.* / node.* lifecycle events for observability and evolution hooks |
+| **D4 Evolution** | Static → semi-static → dynamic → evolution reuse; unmatched sub-tasks automatically become sub-DAGs |
+| **D4EvolutionHook** | Tracks dynamic node frequency and latency; auto-suggests promotion to static nodes |
+| **Token Budget Control** | Track token consumption; circuit breaker on over-limit |
+| **Auto Data Routing** | Connect edges = data flows; zero-config input/output |
+| **Sandbox Testing** | Execute DAGs inside the editor; nodes change color in real-time |
+| **Headless CI** | `testDAG()` for UI-less execution, ideal for CI pipelines |
 
 ---
 
-## D4 进化模型
+## Node Types (11)
+
+| Category | Type | Description |
+|----------|------|-------------|
+| **control** | `trigger` | DAG execution entry point |
+| | `task_decompose` | Split commands into parallel sub-tasks |
+| | `dynamic` | ⚡ Catch-all handler + D4 evolution |
+| | `output` | Final deliverable output |
+| **ai** | `llm_call` | LLM inference / generation |
+| | `knowledge` | Multi-source knowledge retrieval |
+| | `strategy` | Persona / rules / behavior guidelines |
+| **integration** | `api_call` | HTTP API calls |
+| | `mcp_tool` | MCP protocol tool calls |
+| | `merge` | Multi-type asset composition |
+| **verification** | `verification` | SGV adversarial quality check |
+
+---
+
+## D4 Evolution Model
 
 ```
-L1: 全静态              L2: 半静态             L3: 动态              L4: 进化复用
+L1: Static               L2: Semi-Static          L3: Dynamic             L4: Evolution Reuse
 
-用户画完整 DAG         用户画骨架 +          无预定义 DAG          历史最佳自动
-全部节点明确编排        dynamic 兜底         完全动态生成          检索匹配适配
-                        task_decompose 驱动  LLM 从零拆解          持续微进化
-完全可预测              灵活度提升            学习路径              结构自优化
+Complete DAG             User draws skeleton +    No predefined DAG       Best-practice auto-
+drawn by user            dynamic catch-all        fully dynamic           retrieval and adaptation
+Fully predictable        Flexible                 Learning path           Continuous micro-evolution
 
-           ───→ 使用增多 ───→ 子任务路径稳定 ───→ D4EvolutionHook 建议提升
+           ───→ increased usage ───→ sub-task path stabilizes ───→ D4EvolutionHook suggests promotion
 ```
 
 ---
 
-## 快速开始
+## Quick Start
 
 ```tsx
 import { DAGEditor } from '@opcpflow/react'
@@ -110,7 +109,7 @@ export default function App() {
 }
 ```
 
-### 编程执行 + D4 进化
+### Programmatic Execution + D4 Evolution
 
 ```ts
 import { DAGExecutionEngine, HandlerRegistry, D4EvolutionHook } from '@opcpflow/core'
@@ -132,7 +131,7 @@ console.log('Token usage:', engine.getStore().getTokenUsage())
 
 ---
 
-## 开发
+## Development
 
 ```bash
 pnpm install
