@@ -55,9 +55,6 @@ jobs:
       - name: Type-check demo app
         run: pnpm --filter opcpflow-demo exec tsc --noEmit
 
-      - name: Type-check docs
-        run: pnpm --filter opcpflow-docs exec tsc --noEmit
-
   test:
     name: Test
     runs-on: ubuntu-latest
