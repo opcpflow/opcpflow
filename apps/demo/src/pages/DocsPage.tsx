@@ -87,25 +87,41 @@ interface DocCardProps {
 
 function DocCard({ title, desc, badge, href }: DocCardProps) {
   const isExternal = href.startsWith('http')
-  const Wrapper = isExternal ? 'a' : Link
-  const props = isExternal
-    ? { href, target: '_blank', rel: 'noopener noreferrer' }
-    : { to: href }
-
-  return (
-    <Wrapper
-      {...props}
-      style={cardStyle}
-      onMouseOver={(e) => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)' }}
-      onMouseOut={(e) => { e.currentTarget.style.boxShadow = 'none' }}
-    >
+  const cardContent = (
+    <>
       <div style={cardTitleStyle}>
         {title}
         {badge && <span style={badgeStyle}>{badge}</span>}
         {isExternal && <span style={{ marginLeft: 8, fontSize: 12, color: '#94a3b8' }}>↗</span>}
       </div>
       <div style={cardDescStyle}>{desc}</div>
-    </Wrapper>
+    </>
+  )
+
+  if (isExternal) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={cardStyle as React.CSSProperties}
+        onMouseOver={(e) => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)' }}
+        onMouseOut={(e) => { e.currentTarget.style.boxShadow = 'none' }}
+      >
+        {cardContent}
+      </a>
+    )
+  }
+
+  return (
+    <Link
+      to={href}
+      style={cardStyle}
+      onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)' }}
+      onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = 'none' }}
+    >
+      {cardContent}
+    </Link>
   )
 }
 

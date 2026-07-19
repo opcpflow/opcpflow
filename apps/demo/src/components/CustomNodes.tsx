@@ -1,7 +1,6 @@
 import React, { memo } from 'react'
-import type { NodeProps, Node as XYFlowNode } from '@xyflow/react'
+import type { NodeProps } from '@xyflow/react'
 import { Handle, Position } from '@xyflow/react'
-import type { DAGNode } from '@opcpflow/core'
 
 /**
  * Custom Node Type: StatusIndicator
@@ -28,8 +27,9 @@ const statusColors: Record<string, { bg: string; border: string; text: string }>
 export const StatusIndicatorNode = memo(function StatusIndicatorNode({
   data,
   selected,
-}: NodeProps<StatusIndicatorData>) {
-  const status = data.status || 'pending'
+}: NodeProps) {
+  const nodeData = data as unknown as StatusIndicatorData
+  const status = nodeData.status || 'pending'
   const colors = statusColors[status] || statusColors.pending
 
   return (
@@ -48,7 +48,7 @@ export const StatusIndicatorNode = memo(function StatusIndicatorNode({
       <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
 
       <div style={{ fontSize: 13, fontWeight: 600, color: colors.text, marginBottom: 4 }}>
-        {data.label || 'Status'}
+        {nodeData.label || 'Status'}
       </div>
 
       <div style={{
@@ -65,15 +65,15 @@ export const StatusIndicatorNode = memo(function StatusIndicatorNode({
         {status}
       </div>
 
-      {data.progress !== undefined && (
+      {nodeData.progress !== undefined && (
         <div style={{ marginTop: 8, width: '100%', height: 4, backgroundColor: '#e2e8f0', borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ width: `${data.progress}%`, height: '100%', backgroundColor: colors.border, borderRadius: 2, transition: 'width 0.3s' }} />
+          <div style={{ width: `${nodeData.progress}%`, height: '100%', backgroundColor: colors.border, borderRadius: 2, transition: 'width 0.3s' }} />
         </div>
       )}
 
-      {data.message && (
+      {nodeData.message && (
         <div style={{ fontSize: 11, color: colors.text, marginTop: 6, opacity: 0.7 }}>
-          {data.message}
+          {nodeData.message}
         </div>
       )}
 
@@ -97,7 +97,8 @@ export interface DataPreviewData {
 export const DataPreviewNode = memo(function DataPreviewNode({
   data,
   selected,
-}: NodeProps<DataPreviewData>) {
+}: NodeProps) {
+  const nodeData = data as unknown as DataPreviewData
   return (
     <div
       style={{
@@ -113,7 +114,7 @@ export const DataPreviewNode = memo(function DataPreviewNode({
       <Handle type="target" position={Position.Top} />
 
       <div style={{ fontSize: 12, fontWeight: 600, color: '#1e293b', marginBottom: 6 }}>
-        {data.label || 'Data Preview'}
+        {nodeData.label || 'Data Preview'}
       </div>
 
       <div style={{
@@ -128,7 +129,7 @@ export const DataPreviewNode = memo(function DataPreviewNode({
         whiteSpace: 'pre-wrap',
         wordBreak: 'break-all',
       }}>
-        {data.preview || 'No data'}
+        {nodeData.preview || 'No data'}
       </div>
 
       <Handle type="source" position={Position.Bottom} />
