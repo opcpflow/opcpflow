@@ -15,7 +15,7 @@ const sampleDag: DAGDocument = {
 
 describe('useExecution', () => {
   afterEach(() => {
-    try { window.localStorage.clear() } catch {}
+    try { window.localStorage.clear() } catch { /* jsdom may not support clear */ }
   })
 
   it('should start in edit mode with idle state', () => {

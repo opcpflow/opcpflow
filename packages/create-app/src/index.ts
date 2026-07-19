@@ -86,7 +86,7 @@ async function main(): Promise<void> {
 
   const useTypescript = await readlineConfirm('  Use TypeScript?', true)
 
-  const template: 'basic' = 'basic'
+  const template = 'basic' as const
 
   const options: CreateAppOptions = {
     projectName,

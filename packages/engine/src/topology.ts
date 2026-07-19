@@ -207,6 +207,7 @@ export class TopologyAnalyzer {
     const waves: string[][] = []
     const degree = new Map(inDegree)
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const currentWave = nodes
         .filter((n) => degree.get(n.id) === 0)

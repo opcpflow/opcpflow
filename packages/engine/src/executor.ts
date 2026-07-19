@@ -119,7 +119,7 @@ export class Executor {
     this.tracer?.startTrace(plan.dagExecId)
     this.recorder?.recordStart(plan.dagExecId, plan.nodes, plan.edges)
 
-    let replanDepth = 0
+    const replanDepth = 0
 
     try {
       await this.executeWaves(
@@ -173,6 +173,7 @@ export class Executor {
     const { nodes, edges, state } = plan
     let waveIndex = 0
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const result = this.frontier.compute(nodes, edges, this.toStatusMap(state))
 

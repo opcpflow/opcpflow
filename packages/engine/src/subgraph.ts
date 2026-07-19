@@ -98,6 +98,7 @@ export class SubgraphAnalyzer {
         visited.add(node.id)
         let current = node.id
 
+        // eslint-disable-next-line no-constant-condition
         while (true) {
           const outgoing = e.filter((edge) => edge.source === current)
           if (outgoing.length !== 1) break

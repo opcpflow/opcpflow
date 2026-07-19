@@ -124,6 +124,7 @@ export class DAGExecutionEngine {
       }
     }
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       // Move ready nodes to in-flight
       if (ready.size > 0) {
