@@ -12,7 +12,7 @@ import {
 } from '@opcpflow/react'
 import { createDefaultRegistry } from '@opcpflow/nodes'
 import type { DAGDocument, DAGNode, DAGEdge, Metadata, NodeRegistry } from '@opcpflow/core'
-import { HandlerRegistry, D4EvolutionHook, ModelRegistry, exportDAG, importDAG, validateAll } from '@opcpflow/core'
+import { HandlerRegistry, D4EvolutionAnalyzer, ModelRegistry, exportDAG, importDAG, validateAll } from '@opcpflow/core'
 import simplePipeline from '../../../../packages/nodes/examples/simple-pipeline.json'
 
 const registry: NodeRegistry = createDefaultRegistry()
@@ -132,7 +132,7 @@ export default function EditorPage() {
   const exec = useExecution()
   const [execMode, setExecMode] = useState<'edit' | 'test'>('edit')
   const handlersRef = useRef(HandlerRegistry.createWithBuiltIns())
-  const analyzerRef = useRef(new D4EvolutionHook())
+  const analyzerRef = useRef(new D4EvolutionAnalyzer())
   const {
     nodes,
     edges,
