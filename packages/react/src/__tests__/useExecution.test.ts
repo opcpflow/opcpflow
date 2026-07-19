@@ -14,6 +14,10 @@ const sampleDag: DAGDocument = {
 }
 
 describe('useExecution', () => {
+  afterEach(() => {
+    try { window.localStorage.clear() } catch {}
+  })
+
   it('should start in edit mode with idle state', () => {
     const { result } = renderHook(() => useExecution())
     expect(result.current.mode).toBe('edit')
