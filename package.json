@@ -29,6 +29,11 @@
   "license": "Apache-2.0",
   "author": "opcpflow",
   "homepage": "https://github.com/opcpflow/opcpflow",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0"
+  },
   "keywords": [
     "dag",
     "workflow",
