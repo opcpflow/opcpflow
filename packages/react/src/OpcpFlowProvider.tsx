@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react'
 import type { DAGDocument, DAGNode, DAGEdge, Metadata, NodeRegistry } from '@opcpflow/core'
 
 export interface OpcpFlowContextValue {
@@ -30,28 +30,33 @@ export function OpcpFlowProvider({
 }: OpcpFlowProviderProps) {
   const [doc, setDoc] = useState<DAGDocument>(initialDoc)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+  const onChangeRef = useRef(onDocChange)
+  onChangeRef.current = onDocChange
 
   const onUpdateNodes = useCallback(
     (nodes: DAGNode[]) => {
       setDoc((prev) => {
         const next = { ...prev, nodes }
-        onDocChange?.(next)
         return next
       })
     },
-    [onDocChange],
+    [],
   )
 
   const onUpdateEdges = useCallback(
     (edges: DAGEdge[]) => {
       setDoc((prev) => {
         const next = { ...prev, edges }
-        onDocChange?.(next)
         return next
       })
     },
-    [onDocChange],
+    [],
   )
+
+  // Sync doc changes to parent via effect (avoids setState-during-render warning)
+  useEffect(() => {
+    onChangeRef.current?.(doc)
+  }, [doc])
 
   const onSelectNode = useCallback((id: string | null) => {
     setSelectedNodeId(id)

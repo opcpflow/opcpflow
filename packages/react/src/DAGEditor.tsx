@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   type DAGDocument,
   type DAGNode,
+  type FormFieldDefinition,
   type NodeRegistry,
   type HandlerRegistry,
   D4EvolutionAnalyzer,
@@ -44,6 +45,8 @@ export interface DAGEditorProps {
   executionHandlers?: HandlerRegistry
   /** Default execution mode */
   defaultExecutionMode?: 'edit' | 'test'
+  /** Custom field renderers keyed by field name */
+  fieldRenderers?: Record<string, React.ComponentType<{ field: FormFieldDefinition; value: unknown; onChange: (value: unknown) => void }>>
 }
 
 // ── Styles ──
@@ -206,6 +209,7 @@ export function DAGEditor({
   className,
   executionHandlers,
   defaultExecutionMode,
+  fieldRenderers,
 }: DAGEditorProps) {
   const {
     nodes,
@@ -321,21 +325,26 @@ export function DAGEditor({
         e.preventDefault()
         if (!readOnly) handleSave()
       }
-      // Skip if user is currently editing a text field
-      const tag = document.activeElement?.tagName
-      const isEditing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'
-      // Backspace on selected node → focus the label input for editing
-      if (!isEditing && e.key === 'Backspace' && selectedNode) {
-        e.preventDefault()
-        setShowConfig(true)
-        requestAnimationFrame(() => {
-          const input = labelInputRef.current
-          if (input) {
-            input.focus()
-            const len = input.value.length
-            input.setSelectionRange(len, len)
-          }
-        })
+      if (e.key === 'Backspace' && selectedNode) {
+        const tag = document.activeElement?.tagName
+        const isEditing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'
+        if (isEditing) {
+          // User is editing a text field — stop event from reaching React Flow's
+          // built-in delete handler, which would remove the selected node.
+          e.stopPropagation()
+        } else {
+          e.stopImmediatePropagation()
+          e.preventDefault()
+          setShowConfig(true)
+          requestAnimationFrame(() => {
+            const input = labelInputRef.current
+            if (input) {
+              input.focus()
+              const len = input.value.length
+              input.setSelectionRange(len, len)
+            }
+          })
+        }
       }
     }
     window.addEventListener('keydown', handler)
@@ -705,7 +714,7 @@ export function DAGEditor({
                   >×</button>
                 </div>
               </div>
-              <NodeConfigPanel node={selectedNode} labelInputRef={labelInputRef} />
+              <NodeConfigPanel node={selectedNode} labelInputRef={labelInputRef} fieldRenderers={fieldRenderers} />
             </div>
           )}
         </div>

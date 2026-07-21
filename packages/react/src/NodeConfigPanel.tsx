@@ -4,12 +4,29 @@ import { collectAvailableVars, getPredecessors, ModelRegistry } from '@opcpflow/
 import { useOpcpFlow } from './OpcpFlowProvider'
 import { InputRefsEditor } from './InputRefsEditor'
 
+export type FieldRenderer = React.ComponentType<{
+  field: FormFieldDefinition
+  value: unknown
+  onChange: (value: unknown) => void
+}>
+
 export interface NodeConfigPanelProps {
   node: DAGNode
   labelInputRef?: React.RefObject<HTMLInputElement | null>
+  fieldRenderers?: Record<string, FieldRenderer>
 }
 
-export function NodeConfigPanel({ node, labelInputRef }: NodeConfigPanelProps) {
+// React Flow v12 registers a window-level keydown listener for Delete/Backspace.
+// Even with deleteKeyCode={null}, inputs inside the config panel bubble events to
+// window, causing the selected node to be removed. Stop propagation at the input
+// level to prevent this.
+function onInputKeyDown(e: React.KeyboardEvent) {
+  if (e.key === 'Backspace' || e.key === 'Delete') {
+    e.stopPropagation()
+  }
+}
+
+export function NodeConfigPanel({ node, labelInputRef, fieldRenderers }: NodeConfigPanelProps) {
   const { registry, doc, onUpdateNodes } = useOpcpFlow()
   const typeDef = registry.get(node.type)
 
@@ -79,6 +96,7 @@ export function NodeConfigPanel({ node, labelInputRef }: NodeConfigPanelProps) {
             type="text"
             value={node.data.label || ''}
             onChange={(e) => updateNodeData('label', e.target.value)}
+            onKeyDown={onInputKeyDown}
             placeholder="Label..."
             style={{
               flex: 1,
@@ -129,6 +147,7 @@ export function NodeConfigPanel({ node, labelInputRef }: NodeConfigPanelProps) {
               batchUpdateNodeData={batchUpdateNodeData}
               edges={doc.edges}
               nodes={doc.nodes}
+              fieldRenderers={fieldRenderers}
             />
           ))
         : fields.filter((f) => f.type !== 'refs').map((field) => (
@@ -144,6 +163,7 @@ export function NodeConfigPanel({ node, labelInputRef }: NodeConfigPanelProps) {
                 batchUpdateNodeData={batchUpdateNodeData}
                 edges={doc.edges}
                 nodes={doc.nodes}
+                fieldRenderers={fieldRenderers}
               />
             </div>
           ))}
@@ -164,6 +184,7 @@ function FormSection({
   batchUpdateNodeData,
   edges = [],
   nodes = [],
+  fieldRenderers,
 }: {
   group: FormFieldGroup
   nodeId: string
@@ -172,6 +193,7 @@ function FormSection({
   batchUpdateNodeData: (updates: Record<string, unknown>) => void
   edges?: DAGEdge[]
   nodes?: DAGNode[]
+  fieldRenderers?: Record<string, FieldRenderer>
 }) {
   const [collapsed, setCollapsed] = React.useState(
     group.collapsible && group.defaultCollapsed,
@@ -230,6 +252,7 @@ function FormSection({
                 batchUpdateNodeData={batchUpdateNodeData}
                 edges={edges}
                 nodes={nodes}
+                fieldRenderers={fieldRenderers}
               />
             </div>
           ))}
@@ -249,6 +272,7 @@ function FieldRenderer({
   batchUpdateNodeData,
   edges = [],
   nodes = [],
+  fieldRenderers,
 }: {
   field: FormFieldDefinition
   nodeId: string
@@ -257,9 +281,16 @@ function FieldRenderer({
   batchUpdateNodeData: (updates: Record<string, unknown>) => void
   edges?: DAGEdge[]
   nodes?: DAGNode[]
+  fieldRenderers?: Record<string, FieldRenderer>
 }) {
   const value = nodeData[field.name]
   const fieldValue = value ?? field.defaultValue ?? ''
+
+  // Custom field renderer takes precedence over built-in types
+  const CustomRenderer = fieldRenderers?.[field.name]
+  if (CustomRenderer) {
+    return <CustomRenderer field={field} value={fieldValue} onChange={(v) => updateNodeData(field.name, v)} />
+  }
 
   switch (field.type) {
     case 'text':
@@ -268,6 +299,7 @@ function FieldRenderer({
           type="text"
           value={fieldValue as string}
           onChange={(e) => updateNodeData(field.name, e.target.value)}
+          onKeyDown={onInputKeyDown}
           placeholder={field.placeholder}
           style={inputStyle}
         />
@@ -278,6 +310,7 @@ function FieldRenderer({
         <textarea
           value={fieldValue as string}
           onChange={(e) => updateNodeData(field.name, e.target.value)}
+          onKeyDown={onInputKeyDown}
           placeholder={field.placeholder}
           rows={12}
           style={{ ...inputStyle, resize: 'vertical', minHeight: 240 }}
@@ -347,6 +380,7 @@ function FieldRenderer({
             type="text"
             value={fieldValue as string}
             onChange={(e) => updateNodeData(field.name, e.target.value)}
+            onKeyDown={onInputKeyDown}
             placeholder={field.placeholder || 'Employee ID...'}
             style={inputStyle}
           />
@@ -582,7 +616,7 @@ const sectionTitleStyle: React.CSSProperties = {
 const AUTO_FIELDS = new Set([
   'execution_mode', 'input_refs', 'output_key',
   'max_retries', 'timeout_seconds', 'replan_on_failure',
-  'assigned_employee_id', 'required_skill',
+  'required_skill',
 ])
 
 const inputStyle: React.CSSProperties = {

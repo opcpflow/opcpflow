@@ -144,6 +144,7 @@ export function useDAGFlow(
   )
 
   const updateNodes = useCallback((updated: DAGNode[]) => {
+    if (updated.length === 0) return
     setNodes(updated)
   }, [])
 
